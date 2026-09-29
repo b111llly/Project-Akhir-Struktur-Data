@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.zip
+.vscode/
+.idea/
+README-Proyek-2EZ4U.pdf
+data/
