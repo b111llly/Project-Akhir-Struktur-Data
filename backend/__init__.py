@@ -1,1 +1,1 @@
-"""Backend 2EZ4U APP."""
+"Backend 2EZ4U APP."
