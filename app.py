@@ -32,7 +32,6 @@ class AplikasiM1:
         
         font_family = "Segoe UI" if sys.platform.startswith("win") else ("Helvetica Neue" if sys.platform == "darwin" else "DejaVu Sans")
 
-        # Palette warna cerah / light theme
         bg_main = "#ffffff"
         bg_subtle = "#f8fafc"
         border_col = "#cbd5e1"
@@ -51,19 +50,16 @@ class AplikasiM1:
         style.configure("Section.TLabel", background=bg_main, font=(font_family, 11, "bold"), foreground=text_primary)
         style.configure("Status.TLabel", background=bg_main, font=(font_family, 10, "bold"), foreground="#15803d")
 
-        # Tombol Operasi
         style.configure("Action.TButton", font=(font_family, 10, "bold"), background=btn_bg, foreground=text_primary, bordercolor=border_col, relief="flat", padding=(10, 6))
         style.map("Action.TButton",
                   background=[("pressed", "#cbd5e1"), ("active", btn_hover), ("disabled", bg_subtle)],
                   foreground=[("disabled", "#94a3b8")])
 
-        # Tombol Aksi Utama (Jalankan)
         style.configure("Primary.TButton", font=(font_family, 10, "bold"), background=accent_blue, foreground="#ffffff", bordercolor=accent_blue, relief="flat", padding=(12, 6))
         style.map("Primary.TButton",
                   background=[("pressed", "#075985"), ("active", accent_hover), ("disabled", "#cbd5e1")],
                   foreground=[("disabled", "#94a3b8")])
 
-        # Input Entry & Combobox
         style.configure("TEntry", fieldbackground="#ffffff", foreground=text_primary, bordercolor=border_col, lightcolor=border_col, darkcolor=border_col, padding=5)
         style.configure("TCombobox", fieldbackground="#ffffff", background=bg_subtle, foreground=text_primary, bordercolor=border_col, padding=4)
         style.map("TCombobox",
@@ -71,13 +67,11 @@ class AplikasiM1:
                   selectbackground=[("readonly", "#ffffff")],
                   selectforeground=[("readonly", text_primary)])
 
-        # Tabel / Treeview
         style.configure("Treeview", background="#ffffff", foreground=text_primary, fieldbackground="#ffffff", rowheight=26, bordercolor=border_col)
         style.configure("Treeview.Heading", background=btn_bg, foreground=text_primary, font=(font_family, 10, "bold"), bordercolor=border_col, padding=5)
         style.map("Treeview", background=[("selected", "#e0f2fe")], foreground=[("selected", "#0369a1")])
         style.map("Treeview.Heading", background=[("active", btn_hover)])
 
-        # Separator & Scrollbar
         style.configure("TSeparator", background="#e2e8f0")
         style.configure("Vertical.TScrollbar", background=btn_bg, troughcolor=bg_subtle, bordercolor=border_col, arrowcolor="#64748b")
 
@@ -86,7 +80,6 @@ class AplikasiM1:
         utama.pack(fill="both", expand=True)
         ttk.Label(utama, text="2EZ4U APP", style="Title.TLabel").pack(anchor="w", pady=(0, 14))
 
-        # Gunakan frame layout kiri-kanan yang konsisten di semua sistem operasi
         area = ttk.Frame(utama)
         area.pack(fill="both", expand=True)
         kiri = ttk.Frame(area, padding=(0, 0, 14, 0))
@@ -155,7 +148,6 @@ class AplikasiM1:
         self.root.after(50, self._selesai_muat_data)
 
     def _muat_data(self):
-        # Worker hanya membaca data; seluruh akses Tk tetap di thread utama.
         try:
             mesin = MesinM1()
             jumlah = mesin.muat_csv(self.path_data)

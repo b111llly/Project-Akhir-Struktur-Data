@@ -1,74 +1,100 @@
-from backend.m2_antrean import Tumpukan, Stack
+from backend.m2_antrean import Tumpukan, Stack, pecah_token, ke_postfix, hitung
 
 
 def test_tumpukan_step1():
-    # 1. Stack baru harus kosong
     s = Tumpukan()
-    assert s.kosong() is True, "Stack baru harus dalam kondisi kosong"
-    assert s.ukuran == 0, "Ukuran stack baru harus 0"
+    assert s.kosong() is True
+    assert s.ukuran == 0
 
-    # 2. Push elemen
     s.push(10)
-    assert s.kosong() is False, "Stack tidak boleh kosong setelah push"
-    assert s.ukuran == 1, "Ukuran stack harus 1 setelah 1 kali push"
+    assert s.kosong() is False
+    assert s.ukuran == 1
 
     s.push(20)
-    assert s.ukuran == 2, "Ukuran stack harus 2 setelah 2 kali push"
+    assert s.ukuran == 2
 
     s.push(30)
-    assert s.ukuran == 3, "Ukuran stack harus 3 setelah 3 kali push"
+    assert s.ukuran == 3
 
-    # 3. Peek elemen puncak
-    assert s.peek() == 30, "Peek harus menghasilkan elemen teratas (30)"
-    assert s.ukuran == 3, "Peek tidak boleh mengurangi ukuran stack"
+    assert s.peek() == 30
+    assert s.ukuran == 3
 
-    # 4. Pop elemen
     teratas = s.pop()
-    assert teratas == 30, "Pop pertama harus menghasilkan elemen teratas (30)"
-    assert s.ukuran == 2, "Ukuran stack harus berkurang menjadi 2"
+    assert teratas == 30
+    assert s.ukuran == 2
 
     kedua = s.pop()
-    assert kedua == 20, "Pop kedua harus menghasilkan 20"
-    assert s.ukuran == 1, "Ukuran stack harus berkurang menjadi 1"
+    assert kedua == 20
+    assert s.ukuran == 1
 
     ketiga = s.pop()
-    assert ketiga == 10, "Pop ketiga harus menghasilkan 10"
-    assert s.ukuran == 0, "Ukuran stack harus kembali menjadi 0"
+    assert ketiga == 10
+    assert s.ukuran == 0
 
-    # 5. Kondisi kosong bekerja
-    assert s.kosong() is True, "Stack harus kembali kosong"
+    assert s.kosong() is True
 
-    # 6. Pop stack kosong ditangani dengan aman
     tertangkap_pop = False
     try:
         s.pop()
     except IndexError:
         tertangkap_pop = True
-    assert tertangkap_pop is True, "Pop pada stack kosong harus memicu IndexError"
+    assert tertangkap_pop is True
 
-    # 7. Peek stack kosong ditangani dengan aman
     tertangkap_peek = False
     try:
         s.peek()
     except IndexError:
         tertangkap_peek = True
-    assert tertangkap_peek is True, "Peek pada stack kosong harus memicu IndexError"
+    assert tertangkap_peek is True
 
-    # 8. Uji penggandaan kapasitas (doubling) primitive array
     t = Stack(kapasitas_awal=2)
     t.push(1)
     t.push(2)
     assert t.kapasitas == 2
     t.push(3)
-    assert t.kapasitas == 4, "Kapasitas harus mengganda menjadi 4 saat penuh"
+    assert t.kapasitas == 4
     assert t.ukuran == 3
     assert t.pop() == 3
     assert t.pop() == 2
     assert t.pop() == 1
     assert t.kosong() is True
 
-    print("M2 STEP 1 CHECK OK: Tumpukan (Stack) primitive array lulus semua pengujian.")
+
+def test_mesin_kasir_step2():
+    expr_spec = "( 3 * 12000 ) + ( 2 * 8500 ) - 5000"
+    post_spec = ke_postfix(expr_spec)
+    assert post_spec == "3 12000 * 2 8500 * + 5000 -", f"Hasil postfix salah: {post_spec}"
+    total_spec = hitung(post_spec)
+    assert total_spec == 48000, f"Hasil evaluasi salah: {total_spec}"
+
+    expr1 = "10 + 20 * 3"
+    post1 = ke_postfix(expr1)
+    assert post1 == "10 20 3 * +"
+    assert hitung(post1) == 70
+
+    expr2 = "( 10 + 20 ) * 3"
+    post2 = ke_postfix(expr2)
+    assert post2 == "10 20 + 3 *"
+    assert hitung(post2) == 90
+
+    expr3 = "100 - 20 - 10"
+    post3 = ke_postfix(expr3)
+    assert post3 == "100 20 - 10 -"
+    assert hitung(post3) == 70
+
+    expr4 = "( ( 50 - ( 10 + 5 ) ) * 2 ) / 7"
+    post4 = ke_postfix(expr4)
+    assert post4 == "50 10 5 + - 2 * 7 /"
+    assert hitung(post4) == 10
+
+    div_expr = "100 / 4 / 5"
+    post_div = ke_postfix(div_expr)
+    assert post_div == "100 4 / 5 /"
+    assert hitung(post_div) == 5
+
+    print("M2 STEP 1 & 2 CHECK OK: Tumpukan dan Mesin Kasir Postfix lulus semua pengujian.")
 
 
 if __name__ == "__main__":
     test_tumpukan_step1()
+    test_mesin_kasir_step2()

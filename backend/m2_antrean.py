@@ -50,3 +50,87 @@ class Tumpukan:
 
 
 Stack = Tumpukan
+
+
+def pecah_token(ekspresi):
+    tokens = []
+    i = 0
+    panjang = len(ekspresi)
+    while i < panjang:
+        karakter = ekspresi[i]
+        if karakter in " \t\r\n":
+            i += 1
+            continue
+        if "0" <= karakter <= "9":
+            awal = i
+            while i < panjang and "0" <= ekspresi[i] <= "9":
+                i += 1
+            tokens.append(ekspresi[awal:i])
+            continue
+        if karakter in "+-*/()":
+            tokens.append(karakter)
+            i += 1
+            continue
+        i += 1
+    return tokens
+
+
+def presedensi(operator):
+    if operator in ("*", "/"):
+        return 2
+    if operator in ("+", "-"):
+        return 1
+    return 0
+
+
+def ke_postfix(ekspresi):
+    tokens = pecah_token(ekspresi)
+    output = []
+    stack = Tumpukan()
+    for token in tokens:
+        if token[0] in "0123456789":
+            output.append(token)
+        elif token == "(":
+            stack.push(token)
+        elif token == ")":
+            while not stack.kosong() and stack.peek() != "(":
+                output.append(stack.pop())
+            if not stack.kosong() and stack.peek() == "(":
+                stack.pop()
+        elif token in ("+", "-", "*", "/"):
+            while (not stack.kosong() and stack.peek() != "(" and
+                   presedensi(stack.peek()) >= presedensi(token)):
+                output.append(stack.pop())
+            stack.push(token)
+    while not stack.kosong():
+        op = stack.pop()
+        if op != "(":
+            output.append(op)
+    return " ".join(output)
+
+
+def hitung(postfix):
+    tokens = pecah_token(postfix)
+    stack = Tumpukan()
+    for token in tokens:
+        if token[0] in "0123456789":
+            stack.push(int(token))
+        elif token in ("+", "-", "*", "/"):
+            if stack.ukuran < 2:
+                raise ValueError("ekspresi tidak valid")
+            b = stack.pop()
+            a = stack.pop()
+            if token == "+":
+                hasil = a + b
+            elif token == "-":
+                hasil = a - b
+            elif token == "*":
+                hasil = a * b
+            elif token == "/":
+                if b == 0:
+                    raise ZeroDivisionError("pembagian dengan nol")
+                hasil = a // b
+            stack.push(hasil)
+    if stack.ukuran != 1:
+        raise ValueError("ekspresi tidak valid")
+    return stack.pop()

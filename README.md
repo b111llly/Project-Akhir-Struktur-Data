@@ -18,6 +18,7 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
 - Struktur data Tumpukan (Stack) dengan alokasi array primitif tetap dan mekanisme penggandaan kapasitas (doubling).
 - Operasi dasar LIFO: push, pop, peek, kosong, dan pengecekan ukuran.
 - Penanganan underflow pada operasi pop dan peek ketika tumpukan kosong.
+- Mesin kasir nota: pemecah token multi-digit, konversi ekspresi infix ke postfix berbasis stack operator, serta evaluasi postfix berbasis stack operand.
 
 ## Struktur Direktori
 
