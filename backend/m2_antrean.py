@@ -134,3 +134,118 @@ def hitung(postfix):
     if stack.ukuran != 1:
         raise ValueError("ekspresi tidak valid")
     return stack.pop()
+
+
+class AntreanNaif:
+    def __init__(self, kapasitas_awal=4):
+        if kapasitas_awal < 1:
+            kapasitas_awal = 1
+        self._data = [None] * kapasitas_awal
+        self._ukuran = 0
+        self._kapasitas = kapasitas_awal
+        self.jumlah_pergeseran = 0
+
+    @property
+    def ukuran(self):
+        return self._ukuran
+
+    @property
+    def kapasitas(self):
+        return self._kapasitas
+
+    def __len__(self):
+        return self._ukuran
+
+    def kosong(self):
+        return self._ukuran == 0
+
+    def is_empty(self):
+        return self._ukuran == 0
+
+    def enqueue(self, nilai):
+        if self._ukuran == self._kapasitas:
+            baru = [None] * (self._kapasitas * 2)
+            i = 0
+            while i < self._ukuran:
+                baru[i] = self._data[i]
+                i += 1
+            self._data = baru
+            self._kapasitas *= 2
+        self._data[self._ukuran] = nilai
+        self._ukuran += 1
+
+    def dequeue(self):
+        if self.kosong():
+            raise IndexError("antrean kosong")
+        nilai = self._data[0]
+        i = 0
+        while i < self._ukuran - 1:
+            self._data[i] = self._data[i + 1]
+            i += 1
+            self.jumlah_pergeseran += 1
+        self._ukuran -= 1
+        self._data[self._ukuran] = None
+        return nilai
+
+    def peek(self):
+        if self.kosong():
+            raise IndexError("antrean kosong")
+        return self._data[0]
+
+
+class AntreanMelingkar:
+    def __init__(self, kapasitas_awal=4):
+        if kapasitas_awal < 1:
+            kapasitas_awal = 1
+        self._data = [None] * kapasitas_awal
+        self._kapasitas = kapasitas_awal
+        self._depan = 0
+        self._belakang = 0
+        self._ukuran = 0
+
+    @property
+    def ukuran(self):
+        return self._ukuran
+
+    @property
+    def kapasitas(self):
+        return self._kapasitas
+
+    def __len__(self):
+        return self._ukuran
+
+    def kosong(self):
+        return self._ukuran == 0
+
+    def is_empty(self):
+        return self._ukuran == 0
+
+    def enqueue(self, nilai):
+        if self._ukuran == self._kapasitas:
+            baru = [None] * (self._kapasitas * 2)
+            i = 0
+            while i < self._ukuran:
+                baru[i] = self._data[(self._depan + i) % self._kapasitas]
+                i += 1
+            self._data = baru
+            self._depan = 0
+            self._belakang = self._ukuran
+            self._kapasitas *= 2
+        self._data[self._belakang] = nilai
+        self._belakang = (self._belakang + 1) % self._kapasitas
+        self._ukuran += 1
+
+    def dequeue(self):
+        if self.kosong():
+            raise IndexError("antrean kosong")
+        nilai = self._data[self._depan]
+        self._data[self._depan] = None
+        self._depan = (self._depan + 1) % self._kapasitas
+        self._ukuran -= 1
+        return nilai
+
+    def peek(self):
+        if self.kosong():
+            raise IndexError("antrean kosong")
+        return self._data[self._depan]
+

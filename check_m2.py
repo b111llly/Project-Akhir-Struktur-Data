@@ -1,4 +1,12 @@
-from backend.m2_antrean import Tumpukan, Stack, pecah_token, ke_postfix, hitung
+from backend.m2_antrean import (
+    Tumpukan,
+    Stack,
+    pecah_token,
+    ke_postfix,
+    hitung,
+    AntreanNaif,
+    AntreanMelingkar,
+)
 
 
 def test_tumpukan_step1():
@@ -95,6 +103,86 @@ def test_mesin_kasir_step2():
     print("M2 STEP 1 & 2 CHECK OK: Tumpukan dan Mesin Kasir Postfix lulus semua pengujian.")
 
 
+def test_antrean_step3():
+    q_naif = AntreanNaif(kapasitas_awal=2)
+    assert q_naif.kosong() is True
+    assert q_naif.ukuran == 0
+    assert q_naif.jumlah_pergeseran == 0
+
+    q_naif.enqueue("A")
+    q_naif.enqueue("B")
+    assert q_naif.kapasitas == 2
+    q_naif.enqueue("C")
+    assert q_naif.kapasitas == 4
+    assert q_naif.ukuran == 3
+    assert q_naif.peek() == "A"
+
+    val_a = q_naif.dequeue()
+    assert val_a == "A"
+    assert q_naif.ukuran == 2
+    assert q_naif.jumlah_pergeseran == 2
+    assert q_naif.peek() == "B"
+
+    val_b = q_naif.dequeue()
+    assert val_b == "B"
+    assert q_naif.ukuran == 1
+    assert q_naif.jumlah_pergeseran == 3
+
+    val_c = q_naif.dequeue()
+    assert val_c == "C"
+    assert q_naif.ukuran == 0
+    assert q_naif.kosong() is True
+
+    tertangkap_naif = False
+    try:
+        q_naif.dequeue()
+    except IndexError:
+        tertangkap_naif = True
+    assert tertangkap_naif is True
+
+    q_ring = AntreanMelingkar(kapasitas_awal=3)
+    assert q_ring.kosong() is True
+    assert q_ring.ukuran == 0
+
+    q_ring.enqueue(10)
+    q_ring.enqueue(20)
+    q_ring.enqueue(30)
+    assert q_ring.kapasitas == 3
+    assert q_ring.ukuran == 3
+    assert q_ring.peek() == 10
+
+    assert q_ring.dequeue() == 10
+    assert q_ring.dequeue() == 20
+    assert q_ring.ukuran == 1
+    assert q_ring.peek() == 30
+
+    q_ring.enqueue(40)
+    q_ring.enqueue(50)
+    assert q_ring.ukuran == 3
+    assert q_ring.kapasitas == 3
+
+    q_ring.enqueue(60)
+    assert q_ring.kapasitas == 6
+    assert q_ring.ukuran == 4
+
+    assert q_ring.dequeue() == 30
+    assert q_ring.dequeue() == 40
+    assert q_ring.dequeue() == 50
+    assert q_ring.dequeue() == 60
+    assert q_ring.kosong() is True
+
+    tertangkap_ring = False
+    try:
+        q_ring.dequeue()
+    except IndexError:
+        tertangkap_ring = True
+    assert tertangkap_ring is True
+
+    print("M2 STEP 3 CHECK OK: AntreanNaif dan AntreanMelingkar lulus semua pengujian.")
+
+
 if __name__ == "__main__":
     test_tumpukan_step1()
     test_mesin_kasir_step2()
+    test_antrean_step3()
+
