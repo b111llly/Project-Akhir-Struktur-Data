@@ -1,22 +1,27 @@
 import os
 import sys
+import queue
+import threading
 import tkinter as tk
 from tkinter import messagebox, ttk
 
 from backend.m1_pesanan import MesinM1, buat_pesanan
 
-
 class AplikasiM1:
     def __init__(self, root):
         self.root = root
-        self.root.title("2EZ4U APP · Milestone 1")
+        self.root.title("2EZ4U APP")
         self.root.geometry("1180x720")
         self.root.minsize(980, 620)
+        self.root.configure(bg="#ffffff")
         self.mesin = MesinM1()
         self.path_data = os.path.join(os.path.dirname(__file__), "data", "pesanan.csv")
         self._buat_style()
         self._buat_ui()
-        self._muat_data()
+        self.siap = False
+        self._hasil_muat = queue.Queue()
+        self.aksi.state(["disabled"])
+        self.root.after(100, self._mulai_muat_data)
 
     def _buat_style(self):
         style = ttk.Style()
@@ -24,23 +29,70 @@ class AplikasiM1:
             style.theme_use("clam")
         except tk.TclError:
             pass
-        style.configure("Title.TLabel", font=("Segoe UI", 18, "bold"), foreground="#12304a")
-        style.configure("Section.TLabel", font=("Segoe UI", 11, "bold"), foreground="#12304a")
-        style.configure("Action.TButton", font=("Segoe UI", 10, "bold"), padding=8)
+        
+        font_family = "Segoe UI" if sys.platform.startswith("win") else ("Helvetica Neue" if sys.platform == "darwin" else "DejaVu Sans")
+
+        # Palette warna cerah / light theme
+        bg_main = "#ffffff"
+        bg_subtle = "#f8fafc"
+        border_col = "#cbd5e1"
+        text_primary = "#0f172a"
+        text_muted = "#64748b"
+        accent_blue = "#0284c7"
+        accent_hover = "#0369a1"
+        btn_bg = "#f1f5f9"
+        btn_hover = "#e2e8f0"
+
+        style.configure(".", background=bg_main, foreground=text_primary, font=(font_family, 10))
+        style.configure("TFrame", background=bg_main)
+        style.configure("TLabel", background=bg_main, foreground=text_primary, font=(font_family, 10))
+        style.configure("Title.TLabel", background=bg_main, font=(font_family, 18, "bold"), foreground=text_primary)
+        style.configure("Subtitle.TLabel", background=bg_main, font=(font_family, 10), foreground=text_muted)
+        style.configure("Section.TLabel", background=bg_main, font=(font_family, 11, "bold"), foreground=text_primary)
+        style.configure("Status.TLabel", background=bg_main, font=(font_family, 10, "bold"), foreground="#15803d")
+
+        # Tombol Operasi
+        style.configure("Action.TButton", font=(font_family, 10, "bold"), background=btn_bg, foreground=text_primary, bordercolor=border_col, relief="flat", padding=(10, 6))
+        style.map("Action.TButton",
+                  background=[("pressed", "#cbd5e1"), ("active", btn_hover), ("disabled", bg_subtle)],
+                  foreground=[("disabled", "#94a3b8")])
+
+        # Tombol Aksi Utama (Jalankan)
+        style.configure("Primary.TButton", font=(font_family, 10, "bold"), background=accent_blue, foreground="#ffffff", bordercolor=accent_blue, relief="flat", padding=(12, 6))
+        style.map("Primary.TButton",
+                  background=[("pressed", "#075985"), ("active", accent_hover), ("disabled", "#cbd5e1")],
+                  foreground=[("disabled", "#94a3b8")])
+
+        # Input Entry & Combobox
+        style.configure("TEntry", fieldbackground="#ffffff", foreground=text_primary, bordercolor=border_col, lightcolor=border_col, darkcolor=border_col, padding=5)
+        style.configure("TCombobox", fieldbackground="#ffffff", background=bg_subtle, foreground=text_primary, bordercolor=border_col, padding=4)
+        style.map("TCombobox",
+                  fieldbackground=[("readonly", "#ffffff")],
+                  selectbackground=[("readonly", "#ffffff")],
+                  selectforeground=[("readonly", text_primary)])
+
+        # Tabel / Treeview
+        style.configure("Treeview", background="#ffffff", foreground=text_primary, fieldbackground="#ffffff", rowheight=26, bordercolor=border_col)
+        style.configure("Treeview.Heading", background=btn_bg, foreground=text_primary, font=(font_family, 10, "bold"), bordercolor=border_col, padding=5)
+        style.map("Treeview", background=[("selected", "#e0f2fe")], foreground=[("selected", "#0369a1")])
+        style.map("Treeview.Heading", background=[("active", btn_hover)])
+
+        # Separator & Scrollbar
+        style.configure("TSeparator", background="#e2e8f0")
+        style.configure("Vertical.TScrollbar", background=btn_bg, troughcolor=bg_subtle, bordercolor=border_col, arrowcolor="#64748b")
 
     def _buat_ui(self):
         utama = ttk.Frame(self.root, padding=18)
         utama.pack(fill="both", expand=True)
-        ttk.Label(utama, text="2EZ4U APP", style="Title.TLabel").pack(anchor="w")
-        ttk.Label(utama, text="M1 · Perbandingan Array dan Linked List", foreground="#5c7080").pack(anchor="w", pady=(0, 12))
+        ttk.Label(utama, text="2EZ4U APP", style="Title.TLabel").pack(anchor="w", pady=(0, 14))
 
-        area = ttk.PanedWindow(utama, orient="horizontal")
+        # Gunakan frame layout kiri-kanan yang konsisten di semua sistem operasi
+        area = ttk.Frame(utama)
         area.pack(fill="both", expand=True)
         kiri = ttk.Frame(area, padding=(0, 0, 14, 0))
         kanan = ttk.Frame(area, padding=(14, 0, 0, 0))
-        area.add(kiri, weight=1)
-        area.add(kanan, weight=3)
-        ttk.Label(kiri, text="OPERASI M1", style="Section.TLabel").pack(anchor="w", pady=(0, 8))
+        kiri.pack(side="left", fill="y", anchor="n")
+        kanan.pack(side="left", fill="both", expand=True)
         self.mode = tk.StringVar(value="array")
         self._tombol(kiri, "ARRAY · LIHAT PESANAN", lambda: self._pilih("lihat", "array"))
         self._tombol(kiri, "ARRAY · TAMBAH REGULER", lambda: self._pilih("tambah", "array", 3))
@@ -70,11 +122,11 @@ class AplikasiM1:
         self.harga = ttk.Entry(form, width=18); self.harga.grid(row=4, column=0, sticky="w", pady=3)
         self.prioritas = ttk.Combobox(form, values=("1 · VIP", "2 · PRIORITAS", "3 · REGULER"), state="readonly", width=16)
         self.prioritas.current(2); self.prioritas.grid(row=4, column=1, sticky="w", pady=3)
-        self.aksi = ttk.Button(form, text="Jalankan", style="Action.TButton", command=self._jalankan)
+        self.aksi = ttk.Button(form, text="Jalankan", style="Primary.TButton", command=self._jalankan)
         self.aksi.grid(row=5, column=0, columnspan=2, sticky="w", pady=(10, 0))
 
         self.info = tk.StringVar(value="Memuat data...")
-        ttk.Label(kanan, textvariable=self.info, foreground="#246b4c").grid(row=2, column=0, sticky="w", pady=(0, 8))
+        ttk.Label(kanan, textvariable=self.info, style="Status.TLabel").grid(row=2, column=0, sticky="w", pady=(0, 8))
         tabel_frame = ttk.Frame(kanan)
         tabel_frame.grid(row=3, column=0, sticky="nsew")
         kanan.rowconfigure(3, weight=1); kanan.columnconfigure(0, weight=1)
@@ -86,27 +138,51 @@ class AplikasiM1:
         while i < len(kolom):
             self.tabel.heading(kolom[i], text=judul[i]); self.tabel.column(kolom[i], width=lebar[i], anchor="w")
             i += 1
+        self.tabel.tag_configure("even", background="#ffffff")
+        self.tabel.tag_configure("odd", background="#f8fafc")
         scroll = ttk.Scrollbar(tabel_frame, orient="vertical", command=self.tabel.yview)
         self.tabel.configure(yscrollcommand=scroll.set)
         self.tabel.pack(side="left", fill="both", expand=True); scroll.pack(side="right", fill="y")
         ttk.Label(kanan, text="COMMAND LOG", style="Section.TLabel").grid(row=4, column=0, sticky="w", pady=(12, 4))
-        self.log = tk.Text(kanan, height=7, state="disabled", bg="#f4f7f9", relief="flat", wrap="word")
+        self.log = tk.Text(kanan, height=7, state="disabled", bg="#f8fafc", fg="#0f172a", relief="solid", bd=1, highlightthickness=1, highlightbackground="#cbd5e1", wrap="word", padx=8, pady=6)
         self.log.grid(row=5, column=0, sticky="ew")
 
     def _tombol(self, parent, teks, perintah):
         ttk.Button(parent, text=teks, style="Action.TButton", command=perintah).pack(fill="x", pady=3)
 
+    def _mulai_muat_data(self):
+        threading.Thread(target=self._muat_data, daemon=True).start()
+        self.root.after(50, self._selesai_muat_data)
+
     def _muat_data(self):
+        # Worker hanya membaca data; seluruh akses Tk tetap di thread utama.
         try:
-            jumlah = self.mesin.muat_csv(self.path_data)
+            mesin = MesinM1()
+            jumlah = mesin.muat_csv(self.path_data)
+            self._hasil_muat.put((mesin, jumlah, None))
+        except Exception as error:
+            self._hasil_muat.put((None, 0, error))
+
+    def _selesai_muat_data(self):
+        try:
+            mesin, jumlah, error = self._hasil_muat.get_nowait()
+        except queue.Empty:
+            self.root.after(50, self._selesai_muat_data)
+            return
+        if error is None:
+            self.mesin = mesin
+            self.siap = True
+            self.aksi.state(["!disabled"])
             self.info.set("%d pesanan siap · Array kapasitas %d · data kedua struktur konsisten" % (jumlah, self.mesin.array.kapasitas))
             self._tulis_log("LOAD CSV", "Array + Linked List", "%d pesanan" % jumlah, 0.0)
             self._refresh_tabel(0)
-        except (OSError, ValueError, IndexError) as error:
+        else:
             self.info.set("Gagal memuat data")
             messagebox.showerror("Gagal memuat data", str(error))
 
     def _pilih(self, operasi, mode, prioritas=None):
+        if not self.siap:
+            return
         self.mode.set(mode)
         self.operasi = operasi
         if prioritas is not None:
@@ -124,6 +200,8 @@ class AplikasiM1:
             raise ValueError("Indeks harus berupa bilangan bulat, contoh: 0")
 
     def _jalankan(self):
+        if not self.siap:
+            return
         operasi = getattr(self, "operasi", "lihat")
         try:
             if operasi == "lihat":
@@ -156,7 +234,8 @@ class AplikasiM1:
         data = self.mesin.ambil_baris(mulai, 14)
         indeks = mulai
         for nilai in data:
-            self.tabel.insert("", "end", values=(indeks, nilai.oid, nilai.menu, nilai.resto, "Rp%d" % nilai.harga, "P%d" % nilai.prioritas, nilai.status))
+            tag = "even" if indeks % 2 == 0 else "odd"
+            self.tabel.insert("", "end", values=(indeks, nilai.oid, nilai.menu, nilai.resto, "Rp%d" % nilai.harga, "P%d" % nilai.prioritas, nilai.status), tags=(tag,))
             indeks += 1
 
     def _tulis_log(self, operasi, struktur, hasil, waktu):
@@ -166,6 +245,8 @@ class AplikasiM1:
         self.log.configure(state="disabled")
 
     def _bandingkan(self):
+        if not self.siap:
+            return
         if self.mesin.ukuran == 0:
             return
         nilai = buat_pesanan("BENCH-001", "Benchmark", "resto-benchmark", "menu-benchmark", 10000, 1)
@@ -175,6 +256,9 @@ class AplikasiM1:
 
 
 def main():
+    if sys.platform == "darwin" and (sys.version_info < (3, 11) or tk.TkVersion < 8.6):
+        from run import main as jalankan_launcher
+        return jalankan_launcher()
     root = tk.Tk()
     AplikasiM1(root)
     root.mainloop()

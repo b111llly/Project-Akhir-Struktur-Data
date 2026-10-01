@@ -46,6 +46,13 @@ Gunakan Python 3.11 atau lebih baru dari folder proyek:
 python run.py
 ```
 
+Di macOS, gunakan `python3 run.py`. Python bawaan Apple dengan Tk 8.5
+tidak kompatibel dan dapat menampilkan jendela kosong. Instal Python 3.11+
+dari https://www.python.org/downloads/macos/ (sudah menyertakan Tk modern).
+Launcher otomatis memilih instalasi Python yang kompatibel dari python.org,
+Homebrew, atau `.venv` proyek. Pemuatan CSV berlangsung di thread terpisah
+agar tampilan dan pesan "Memuat data..." tetap muncul selama startup.
+
 Launcher utama yang direkomendasikan adalah `run.py`; file tersebut otomatis
 mencari folder proyek dan membuka aplikasi. Alternatif langsung:
 

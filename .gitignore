@@ -6,3 +6,7 @@ __pycache__/
 .idea/
 README-Proyek-2EZ4U.pdf
 data/
+.DS_Store
+PROGRESS.md
+progress.md
+REQUIREMENTS/
