@@ -1,69 +1,100 @@
-# 2EZ4U APP — Milestone 1
+# 2EZ4U APP
 
-Engine backend layanan antar makanan mini untuk proyek Struktur Data & Analisa Algoritma. Versi ini mengerjakan M1 saja: data pesanan disimpan bersamaan dalam Array dinamis dan Singly Linked List, lalu keduanya melayani operasi yang sama.
+Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algoritma. Proyek ini mengimplementasikan struktur data secara mandiri tanpa menggunakan struktur bawaan tingkat tinggi (seperti dict, set, heapq, collections, atau fungsi sort bawaan).
 
-## Fitur M1
+## Fitur Utama
 
+### Milestone 1 (M1)
+- Data pesanan disimpan bersamaan dalam Array dinamis dan Singly Linked List untuk melayani operasi yang sama.
 - Lihat pesanan ke-i (indeks dimulai dari 0).
-- Tambah pesanan REGULER (prioritas 3) ke belakang.
-- Tambah pesanan PRIORITAS (prioritas 2) ke tengah antrean.
-- Tambah pesanan VIP (prioritas 1) ke paling depan.
-- Hapus pesanan ke-i dari kedua struktur.
-- Memuat 200.000 baris `data/pesanan.csv`.
-- UI Tkinter menampilkan antrean, detail ringkas, command log, ukuran, kapasitas Array, dan waktu operasi.
+- Tambah pesanan REGULER (prioritas 3) ke posisi belakang antrean.
+- Tambah pesanan PRIORITAS (prioritas 2) ke posisi tengah antrean.
+- Tambah pesanan VIP (prioritas 1) ke posisi paling depan antrean.
+- Hapus pesanan ke-i dari kedua struktur data.
+- Memuat 200.000 baris data/pesanan.csv.
+- Antarmuka GUI Tkinter menampilkan antrean, detail ringkas, command log, ukuran, kapasitas Array, dan waktu eksekusi operasi.
 
-## Struktur
+### Milestone 2 (M2)
+- Struktur data Tumpukan (Stack) dengan alokasi array primitif tetap dan mekanisme penggandaan kapasitas (doubling).
+- Operasi dasar LIFO: push, pop, peek, kosong, dan pengecekan ukuran.
+- Penanganan underflow pada operasi pop dan peek ketika tumpukan kosong.
+
+## Struktur Direktori
 
 ```text
 2ez4u/
 ├── app.py
+├── run.py
 ├── check.py
+├── check_m2.py
+├── README.md
 ├── data/
 │   ├── pesanan.csv
 │   └── peta.csv
 ├── backend/
-│   └── m1_pesanan.py
+│   ├── __init__.py
+│   ├── m1_pesanan.py
+│   └── m2_antrean.py
 └── frontend/
 ```
 
-Array menyimpan referensi dalam `list` primitif dan menggandakan kapasitas saat penuh. Linked List memiliki `head`, `tail`, dan simpul dengan pointer `berikutnya`. Tidak digunakan `dict`, `set`, `sorted`, `.sort()`, `heapq`, atau `collections` pada implementasi struktur data.
+## Karakteristik dan Kompleksitas Struktur Data
 
-## Kompleksitas
+Array dinamis menyimpan referensi dalam list primitif dan menggandakan kapasitasnya saat penuh. Singly Linked List memiliki penunjuk head, tail, serta simpul dengan penunjuk berikutnya.
 
-| Operasi | Array | Linked List |
-|---|---:|---:|
-| Lihat indeks ke-i | O(1) | O(n) |
-| Tambah Reguler | O(1) amortized | O(1) |
-| Tambah Prioritas | O(n) | O(n) telusur |
-| Tambah VIP | O(n) geser | O(1) |
-| Hapus indeks ke-i | O(n) | O(n) telusur |
+### Kompleksitas Waktu Milestone 1:
 
-## Menjalankan
+- Lihat indeks ke-i:
+  Array: O(1)
+  Linked List: O(n)
+- Tambah Reguler:
+  Array: O(1) amortized
+  Linked List: O(1)
+- Tambah Prioritas:
+  Array: O(n)
+  Linked List: O(n) penelusuran
+- Tambah VIP:
+  Array: O(n) pergeseran
+  Linked List: O(1)
+- Hapus indeks ke-i:
+  Array: O(n)
+  Linked List: O(n) penelusuran
 
-Gunakan Python 3.11 atau lebih baru dari folder proyek:
+### Kompleksitas Waktu Tumpukan (Stack) Milestone 2:
+
+- Operasi push: O(1) amortized
+- Operasi pop: O(1)
+- Operasi peek: O(1)
+- Pengecekan kosong (is_empty): O(1)
+
+## Menjalankan Aplikasi
+
+Gunakan Python 3.11 atau lebih baru dari direktori proyek:
 
 ```bash
 python run.py
 ```
 
-Di macOS, gunakan `python3 run.py`. Python bawaan Apple dengan Tk 8.5
-tidak kompatibel dan dapat menampilkan jendela kosong. Instal Python 3.11+
-dari https://www.python.org/downloads/macos/ (sudah menyertakan Tk modern).
-Launcher otomatis memilih instalasi Python yang kompatibel dari python.org,
-Homebrew, atau `.venv` proyek. Pemuatan CSV berlangsung di thread terpisah
-agar tampilan dan pesan "Memuat data..." tetap muncul selama startup.
+Di macOS, gunakan `python3 run.py`. Python bawaan Apple dengan Tk 8.5 tidak kompatibel dan dapat menampilkan jendela kosong. Gunakan Python 3.11 atau lebih baru yang sudah menyertakan Tk modern. Launcher otomatis mendeteksi instalasi Python yang kompatibel dari sistem, Homebrew, atau virtual environment (.venv).
 
-Launcher utama yang direkomendasikan adalah `run.py`; file tersebut otomatis
-mencari folder proyek dan membuka aplikasi. Alternatif langsung:
+Alternatif menjalankan GUI secara langsung:
 
 ```bash
 python app.py
 ```
 
-Untuk pemeriksaan backend tanpa GUI:
+Pemeriksaan backend dan pengujian unit tanpa GUI:
 
+- Menjalankan uji Milestone 1:
 ```bash
 python check.py
 ```
 
-Masukkan indeks pada form untuk melihat atau menghapus. Untuk menambah, isi ID, pelanggan, resto, menu, harga, lalu pilih prioritas. Jika kolom teks kosong, aplikasi memakai nilai contoh; harga kosong menjadi 0.
+- Menjalankan uji Milestone 2 (Stack):
+```bash
+python check_m2.py
+```
+
+## Penggunaan Form GUI
+
+Masukkan indeks pada form untuk melihat atau menghapus pesanan. Untuk menambah pesanan, isi ID, pelanggan, restoran, menu, harga, lalu pilih tingkat prioritas. Jika kolom teks kosong, aplikasi akan memakai nilai contoh bawaan.
