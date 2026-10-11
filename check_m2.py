@@ -6,6 +6,8 @@ from backend.m2_antrean import (
     hitung,
     AntreanNaif,
     AntreanMelingkar,
+    Aksi,
+    PengelolaUndoRedo,
 )
 
 
@@ -181,8 +183,44 @@ def test_antrean_step3():
     print("M2 STEP 3 CHECK OK: AntreanNaif dan AntreanMelingkar lulus semua pengujian.")
 
 
+def test_undo_redo_step4():
+    manajer = PengelolaUndoRedo()
+    assert manajer.bisa_undo is False
+    assert manajer.bisa_redo is False
+    assert manajer.undo() is None
+    assert manajer.redo() is None
+
+    manajer.catat_aksi("ENQUEUE", "Pesanan-1")
+    manajer.catat_aksi("ENQUEUE", "Pesanan-2")
+    assert manajer.bisa_undo is True
+    assert manajer.bisa_redo is False
+
+    aksi_undo1 = manajer.undo()
+    assert aksi_undo1.tipe == "ENQUEUE"
+    assert aksi_undo1.data == "Pesanan-2"
+    assert manajer.bisa_redo is True
+
+    aksi_undo2 = manajer.undo()
+    assert aksi_undo2.tipe == "ENQUEUE"
+    assert aksi_undo2.data == "Pesanan-1"
+    assert manajer.bisa_undo is False
+    assert manajer.bisa_redo is True
+
+    aksi_redo1 = manajer.redo()
+    assert aksi_redo1.tipe == "ENQUEUE"
+    assert aksi_redo1.data == "Pesanan-1"
+    assert manajer.bisa_undo is True
+
+    manajer.catat_aksi("DEQUEUE", "Pesanan-Baru")
+    assert manajer.bisa_redo is False
+
+    print("M2 STEP 4 CHECK OK: Sistem PengelolaUndoRedo lulus semua pengujian.")
+
+
 if __name__ == "__main__":
     test_tumpukan_step1()
     test_mesin_kasir_step2()
     test_antrean_step3()
+    test_undo_redo_step4()
+
 

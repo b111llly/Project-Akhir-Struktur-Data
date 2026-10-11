@@ -1,11 +1,11 @@
 import os
 import sys
-import queue
 import threading
 import tkinter as tk
 from tkinter import messagebox, ttk
 
 from backend.m1_pesanan import MesinM1, buat_pesanan
+from frontend.m3_view import JendelaM3
 
 class AplikasiM1:
     def __init__(self, root):
@@ -19,7 +19,7 @@ class AplikasiM1:
         self._buat_style()
         self._buat_ui()
         self.siap = False
-        self._hasil_muat = queue.Queue()
+        self._hasil_muat = None
         self.aksi.state(["disabled"])
         self.root.after(100, self._mulai_muat_data)
 
@@ -99,6 +99,8 @@ class AplikasiM1:
         ttk.Separator(kiri).pack(fill="x", pady=10)
         self._tombol(kiri, "HAPUS PESANAN KE-i", lambda: self._pilih("hapus", "keduanya"))
         self._tombol(kiri, "BANDINGKAN KINERJA", self._bandingkan)
+        ttk.Separator(kiri).pack(fill="x", pady=10)
+        self._tombol(kiri, "M3 · SORT & SEARCH", lambda: JendelaM3(self.root, self.path_data))
 
         ttk.Label(kanan, text="FORM PARAMETER", style="Section.TLabel").grid(row=0, column=0, sticky="w")
         form = ttk.Frame(kanan)
@@ -151,16 +153,15 @@ class AplikasiM1:
         try:
             mesin = MesinM1()
             jumlah = mesin.muat_csv(self.path_data)
-            self._hasil_muat.put((mesin, jumlah, None))
+            self._hasil_muat = (mesin, jumlah, None)
         except Exception as error:
-            self._hasil_muat.put((None, 0, error))
+            self._hasil_muat = (None, 0, error)
 
     def _selesai_muat_data(self):
-        try:
-            mesin, jumlah, error = self._hasil_muat.get_nowait()
-        except queue.Empty:
+        if self._hasil_muat is None:
             self.root.after(50, self._selesai_muat_data)
             return
+        mesin, jumlah, error = self._hasil_muat
         if error is None:
             self.mesin = mesin
             self.siap = True

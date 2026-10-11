@@ -1,6 +1,5 @@
 import os
 import sys
-import glob
 import subprocess
 
 
@@ -19,9 +18,8 @@ def _pilih_python(folder_proyek):
         return True
     if sys.platform == "darwin":
         kandidat = [os.path.join(folder_proyek, ".venv", "bin", "python3")]
-        kandidat += sorted(glob.glob(
-            "/Library/Frameworks/Python.framework/Versions/3.*/bin/python3"
-        ), reverse=True)
+        for minor in range(15, 10, -1):
+            kandidat.append("/Library/Frameworks/Python.framework/Versions/3.%d/bin/python3" % minor)
         kandidat += ["/opt/homebrew/bin/python3", "/usr/local/bin/python3"]
         probe = (
             "import sys, tkinter; sys.exit(0 if "

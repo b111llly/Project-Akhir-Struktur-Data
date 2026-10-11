@@ -249,3 +249,42 @@ class AntreanMelingkar:
             raise IndexError("antrean kosong")
         return self._data[self._depan]
 
+
+class Aksi:
+    def __init__(self, tipe, data):
+        self.tipe = tipe
+        self.data = data
+
+
+class PengelolaUndoRedo:
+    def __init__(self):
+        self._undo_stack = Tumpukan()
+        self._redo_stack = Tumpukan()
+
+    @property
+    def bisa_undo(self):
+        return not self._undo_stack.kosong()
+
+    @property
+    def bisa_redo(self):
+        return not self._redo_stack.kosong()
+
+    def catat_aksi(self, tipe, data):
+        self._undo_stack.push(Aksi(tipe, data))
+        self._redo_stack = Tumpukan()
+
+    def undo(self):
+        if self._undo_stack.kosong():
+            return None
+        aksi = self._undo_stack.pop()
+        self._redo_stack.push(aksi)
+        return aksi
+
+    def redo(self):
+        if self._redo_stack.kosong():
+            return None
+        aksi = self._redo_stack.pop()
+        self._undo_stack.push(aksi)
+        return aksi
+
+
