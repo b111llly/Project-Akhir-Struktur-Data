@@ -19,6 +19,17 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
 - Operasi dasar LIFO: push, pop, peek, kosong, dan pengecekan ukuran.
 - Penanganan underflow pada operasi pop dan peek ketika tumpukan kosong.
 - Mesin kasir nota: pemecah token multi-digit, konversi ekspresi infix ke postfix berbasis stack operator, serta evaluasi postfix berbasis stack operand.
+- Antrean pesanan dapur: AntreanNaif (pergeseran elemen O(n)) dan AntreanMelingkar (circular array O(1)).
+- Sistem pengelola riwayat tindakan Undo dan Redo berbasis dua tumpukan.
+
+### Milestone 3 (M3)
+- Pengurutan data pesanan stabil berbasis kunci (harga, prioritas, t_masuk, oid, pelanggan, resto, menu):
+  - Insertion Sort: in-place, stabil, O(n^2), dengan penolakan data lebih dari 20.000 baris.
+  - Merge Sort: stabil, rekursif pembagian dua, alokasi buffer tunggal, O(n log n) untuk data penuh 200.000 baris.
+- Pencarian data pesanan:
+  - Linear Search: O(n) pada data acak tanpa syarat terurut.
+  - Binary Search: O(log n) leftmost match pada data terurut berdasarkan kunci, disertai pelaporan ongkos pengurutan indeks awal.
+- Antarmuka visual M3 Tkinter untuk komparasi jumlah perbandingan operasi dan waktu eksekusi secara empiris.
 
 ## Struktur Direktori
 
@@ -28,6 +39,7 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
 ├── run.py
 ├── check.py
 ├── check_m2.py
+├── check_m3.py
 ├── README.md
 ├── data/
 │   ├── pesanan.csv
@@ -35,8 +47,11 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
 ├── backend/
 │   ├── __init__.py
 │   ├── m1_pesanan.py
-│   └── m2_antrean.py
+│   ├── m2_antrean.py
+│   └── m3_urut_cari.py
 └── frontend/
+    ├── __init__.py
+    └── m3_view.py
 ```
 
 ## Karakteristik dan Kompleksitas Struktur Data
@@ -61,12 +76,27 @@ Array dinamis menyimpan referensi dalam list primitif dan menggandakan kapasitas
   Array: O(n)
   Linked List: O(n) penelusuran
 
-### Kompleksitas Waktu Tumpukan (Stack) Milestone 2:
+### Kompleksitas Waktu Milestone 2:
 
-- Operasi push: O(1) amortized
-- Operasi pop: O(1)
-- Operasi peek: O(1)
-- Pengecekan kosong (is_empty): O(1)
+- Tumpukan (Stack):
+  - Operasi push: O(1) amortized
+  - Operasi pop: O(1)
+  - Operasi peek: O(1)
+  - Pengecekan kosong: O(1)
+- Antrean Naif:
+  - Enqueue: O(1) amortized
+  - Dequeue: O(n) pergeseran elemen
+- Antrean Melingkar:
+  - Enqueue: O(1) amortized
+  - Dequeue: O(1) tanpa pergeseran elemen
+- Undo dan Redo: O(1) per operasi tumpukan
+
+### Kompleksitas Waktu Milestone 3:
+
+- Insertion Sort: O(n^2) waktu terburuk dan rata-rata, O(n) waktu terbaik, memori O(1)
+- Merge Sort: O(n log n) pada seluruh kasus, memori tambahan O(n) buffer tunggal
+- Linear Search: O(n) pencarian sekuensial
+- Binary Search: O(log n) pencarian biner pada data terurut
 
 ## Menjalankan Aplikasi
 
@@ -91,11 +121,16 @@ Pemeriksaan backend dan pengujian unit tanpa GUI:
 python check.py
 ```
 
-- Menjalankan uji Milestone 2 (Stack):
+- Menjalankan uji Milestone 2 (Stack, Kasir, Queue, Undo/Redo):
 ```bash
 python check_m2.py
 ```
 
+- Menjalankan uji Milestone 3 (Sort & Search):
+```bash
+python check_m3.py
+```
+
 ## Penggunaan Form GUI
 
-Masukkan indeks pada form untuk melihat atau menghapus pesanan. Untuk menambah pesanan, isi ID, pelanggan, restoran, menu, harga, lalu pilih tingkat prioritas. Jika kolom teks kosong, aplikasi akan memakai nilai contoh bawaan.
+Masukkan indeks pada form untuk melihat atau menghapus pesanan. Untuk menambah pesanan, isi ID, pelanggan, restoran, menu, harga, lalu pilih tingkat prioritas. Jika kolom teks kosong, aplikasi akan memakai nilai contoh bawaan. Untuk modul pengurutan dan pencarian M3, klik tombol M3 · SORT & SEARCH pada panel samping.
