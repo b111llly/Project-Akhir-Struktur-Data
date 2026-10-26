@@ -6,6 +6,7 @@ from tkinter import messagebox, ttk
 
 from backend.m1_pesanan import MesinM1, buat_pesanan
 from frontend.m3_view import JendelaM3
+from frontend.m4_view import JendelaM4
 
 class AplikasiM1:
     def __init__(self, root):
@@ -101,6 +102,7 @@ class AplikasiM1:
         self._tombol(kiri, "BANDINGKAN KINERJA", self._bandingkan)
         ttk.Separator(kiri).pack(fill="x", pady=10)
         self._tombol(kiri, "M3 · SORT & SEARCH", lambda: JendelaM3(self.root, self.path_data))
+        self._tombol(kiri, "M4 · HASH & SEARCH", lambda: JendelaM4(self.root, self.path_data))
 
         ttk.Label(kanan, text="FORM PARAMETER", style="Section.TLabel").grid(row=0, column=0, sticky="w")
         form = ttk.Frame(kanan)

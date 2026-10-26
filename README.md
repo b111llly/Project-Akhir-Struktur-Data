@@ -31,6 +31,15 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
   - Binary Search: O(log n) leftmost match pada data terurut berdasarkan kunci, disertai pelaporan ongkos pengurutan indeks awal.
 - Antarmuka visual M3 Tkinter untuk komparasi jumlah perbandingan operasi dan waktu eksekusi secara empiris.
 
+### Milestone 4 (M4)
+- Struktur data PetaHash (Hash Table) mandiri tanpa menggunakan kamus bawaan dict atau set.
+- Penanganan kolisi menggunakan Separate Chaining (rantai simpul mandiri NodeHash).
+- Fungsi hash string mandiri berbasis algoritma djb2 (hash_teks).
+- Penggandaan kapasitas otomatis (rehashing 2x) saat load factor melampaui ambang batas 0.75.
+- Pencarian data pesanan O(1) rata-rata berbasis OID dan nama Restoran.
+- Perbandingan komparasi empiris performa 3 algoritma pencarian: PetaHash O(1) vs Binary Search O(log n) vs Linear Search O(n).
+- Antarmuka visual M4 Tkinter untuk pengujian pencarian, komparasi performa, dan inspeksi statistik PetaHash (ukuran, kapasitas, jumlah bucket terisi, rantai terpanjang, dan load factor).
+
 ## Struktur Direktori
 
 ```text
@@ -40,6 +49,7 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
 ├── check.py
 ├── check_m2.py
 ├── check_m3.py
+├── check_m4.py
 ├── README.md
 ├── data/
 │   ├── pesanan.csv
@@ -48,10 +58,12 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
 │   ├── __init__.py
 │   ├── m1_pesanan.py
 │   ├── m2_antrean.py
-│   └── m3_urut_cari.py
+│   ├── m3_urut_cari.py
+│   └── m4_pencarian.py
 └── frontend/
     ├── __init__.py
-    └── m3_view.py
+    ├── m3_view.py
+    └── m4_view.py
 ```
 
 ## Karakteristik dan Kompleksitas Struktur Data
@@ -98,6 +110,18 @@ Array dinamis menyimpan referensi dalam list primitif dan menggandakan kapasitas
 - Linear Search: O(n) pencarian sekuensial
 - Binary Search: O(log n) pencarian biner pada data terurut
 
+### Kompleksitas Waktu Milestone 4:
+
+- PetaHash (Hash Table):
+  - Operasi put(k, v): O(1) rata-rata, O(n) terburuk saat rehash
+  - Operasi get(k): O(1) rata-rata, O(n) terburuk bila semua data berada dalam 1 bucket
+  - Operasi remove(k): O(1) rata-rata
+  - Operasi contains(k): O(1) rata-rata
+- Komparasi Pencarian Data 200.000 Baris:
+  - PetaHash O(1): ~1 perbandingan (~0.005 ms)
+  - Binary Search O(log n): ~18 perbandingan (~0.015 ms) + ongkos pengurutan awal
+  - Linear Search O(n): ~150.000 perbandingan (~22 ms)
+
 ## Menjalankan Aplikasi
 
 Gunakan Python 3.11 atau lebih baru dari direktori proyek:
@@ -129,6 +153,11 @@ python check_m2.py
 - Menjalankan uji Milestone 3 (Sort & Search):
 ```bash
 python check_m3.py
+```
+
+- Menjalankan uji Milestone 4 (Peta Hash & Search):
+```bash
+python check_m4.py
 ```
 
 ## Penggunaan Form GUI
