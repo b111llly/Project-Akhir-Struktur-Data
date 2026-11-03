@@ -34,11 +34,13 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
 ### Milestone 4 (M4)
 - Struktur data PetaHash (Hash Table) mandiri tanpa menggunakan kamus bawaan dict atau set.
 - Penanganan kolisi menggunakan Separate Chaining (rantai simpul mandiri NodeHash).
+- Antarmuka kontainer Pythonic mandiri: getitem, setitem, delitem, contains, keys, values, items, dan clear.
 - Fungsi hash string mandiri berbasis algoritma djb2 (hash_teks).
 - Penggandaan kapasitas otomatis (rehashing 2x) saat load factor melampaui ambang batas 0.75.
-- Pencarian data pesanan O(1) rata-rata berbasis OID dan nama Restoran.
+- Pencarian data pesanan O(1) rata-rata berbasis multi-kunci: OID, Restoran, Pelanggan, dan Menu.
+- Range binary search O(log n) untuk pencarian rentang rekaman pada kunci non-unik serta linear search O(n) penuh.
 - Perbandingan komparasi empiris performa 3 algoritma pencarian: PetaHash O(1) vs Binary Search O(log n) vs Linear Search O(n).
-- Antarmuka visual M4 Tkinter untuk pengujian pencarian, komparasi performa, dan inspeksi statistik PetaHash (ukuran, kapasitas, jumlah bucket terisi, rantai terpanjang, dan load factor).
+- Antarmuka visual M4 Tkinter untuk pengujian pencarian multi-kunci, komparasi performa, dan inspeksi statistik PetaHash (ukuran, kapasitas, jumlah bucket terisi, rantai terpanjang, rata-rata panjang rantai, dan load factor).
 
 ## Struktur Direktori
 
