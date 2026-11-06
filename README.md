@@ -42,6 +42,10 @@ Engine backend layanan antar makanan untuk proyek Struktur Data dan Analisa Algo
 - Perbandingan komparasi empiris performa 3 algoritma pencarian: PetaHash O(1) vs Binary Search O(log n) vs Linear Search O(n).
 - Antarmuka visual M4 Tkinter untuk pengujian pencarian multi-kunci, komparasi performa, dan inspeksi statistik PetaHash (ukuran, kapasitas, jumlah bucket terisi, rantai terpanjang, rata-rata panjang rantai, dan load factor).
 
+### Rencana Milestone 5 (M5) & Milestone 6 (M6)
+- M5: Katalog Menu BST dan MinHeap Prioritas (Pencarian rentang harga dan antrean prioritas pengiriman).
+- M6: Peta Graf, BFS, dan Dijkstra (Pemetaan rute terpendek dan navigasi zona pengantaran).
+
 ## Struktur Direktori
 
 ```text
